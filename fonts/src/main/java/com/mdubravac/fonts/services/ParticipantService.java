@@ -26,8 +26,6 @@ public class ParticipantService {
         }
         Participant participant = participantMapper.toParticipant(participantDto);
         Set<Impairment> impairments = participantDto.getImpairmentTypes().stream().map(Impairment::new).collect(Collectors.toSet());
-        System.out.println(participantDto);
-        System.out.println(participant);
         participant.setImpairments(impairments);
         participantRepository.save(participant);
         return participant.getId();

@@ -9,7 +9,6 @@ import com.mdubravac.fonts.exceptions.ApplicationException;
 import com.mdubravac.fonts.mappers.UserMapper;
 import com.mdubravac.fonts.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
