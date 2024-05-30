@@ -30,7 +30,9 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.POST, "/login", "/register", "/apply", "/submit").permitAll().anyRequest().authenticated());
+                        .requestMatchers(HttpMethod.POST, "/login", "/register", "/apply", "/submit").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/review/**", "/count", "/stats").permitAll()
+                        .anyRequest().authenticated());
         return http.build();
     }
 }
