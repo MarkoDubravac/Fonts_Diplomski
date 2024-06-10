@@ -47,4 +47,15 @@ public class SurveyService {
         }
         return fontsAndRatings;
     }
+
+    public List<ChartData> getDurationPerFont() {
+        List<ChartData> fontsAndTimes = new ArrayList<>();
+        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts();
+        for (String font: uniqueFonts) {
+            Float rating = surveyRepository.findAverageDurationPerFont(font);
+            ChartData data = new ChartData(font, rating);
+            fontsAndTimes.add(data);
+        }
+        return fontsAndTimes;
+    }
 }

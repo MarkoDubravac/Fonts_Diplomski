@@ -36,7 +36,12 @@ public class SurveyController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<ChartData>> getStats() {
+    public ResponseEntity<List<ChartData>> getRatingStats() {
         return ResponseEntity.ok(surveyService.getRatingPerFont());
+    }
+
+    @GetMapping("/stats/duration")
+    public ResponseEntity<List<ChartData>> getDurationStats() {
+        return ResponseEntity.ok(surveyService.getDurationPerFont());
     }
 }

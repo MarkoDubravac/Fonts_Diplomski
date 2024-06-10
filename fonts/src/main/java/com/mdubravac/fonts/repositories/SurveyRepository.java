@@ -14,4 +14,7 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     List<String> findAllWithUniqueFonts();
     @Query("SELECT AVG(e.rating) FROM Survey e WHERE e.font = :font")
     Float findAverageRatingOfFont(String font);
+
+    @Query("SELECT AVG(e.duration) FROM Survey e WHERE e.font = :font")
+    Float findAverageDurationPerFont(String font);
 }
