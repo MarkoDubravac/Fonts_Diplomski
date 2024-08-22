@@ -1,16 +1,18 @@
 package com.mdubravac.fonts.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
-public class SurveyDto {
-    private Long id;
-    private String font;
-    private Integer duration;
-    private Integer rating;
+@Builder
+@Data
+public class SurveyResponseDto {
+    private Long surveyId;
     private String surveySession;
+    private List<AnswerDto> answers;
 }

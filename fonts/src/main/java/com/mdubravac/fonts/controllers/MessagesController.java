@@ -13,13 +13,6 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class MessagesController {
 
-    @GetMapping("/messages")
-    @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<List<String>> messages() {
-        System.out.println("AAAAAAAAA");
-        return ResponseEntity.ok(Arrays.asList("First", "Second"));
-    }
-
     @GetMapping("/messages/admin")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<List<String>> messagesAdmin() {

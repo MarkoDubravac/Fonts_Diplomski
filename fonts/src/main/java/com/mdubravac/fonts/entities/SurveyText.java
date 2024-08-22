@@ -1,6 +1,6 @@
 package com.mdubravac.fonts.entities;
 
-import com.mdubravac.fonts.enums.ImpairmentType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +17,12 @@ public class SurveyText {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "text", nullable = false, length = 1024)
     private String text;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "collection_id", nullable = false)
+    @JsonBackReference
+    private TextCollection collection;
 }

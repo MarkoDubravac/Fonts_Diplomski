@@ -1,6 +1,5 @@
 package com.mdubravac.fonts.entities;
 
-import com.mdubravac.fonts.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,5 +20,7 @@ public class Survey {
     private Integer duration;
     @Column(name = "rating", nullable = false)
     private Integer rating;
+    @Column(name = "survey_session", nullable = false)
+    private String surveySession;
 
 }
