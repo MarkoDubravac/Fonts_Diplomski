@@ -15,8 +15,8 @@ import java.util.List;
 @Builder
 @Data
 @Entity
-@Table(name = "survey_test")
-public class SurveyTest {
+@Table(name = "participant_survey")
+public class ParticipantSurvey {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class SurveyTest {
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<QuestionTest> questions;
+    private List<ParticipantQuestion> questions;
 
     @ManyToOne
     @JoinColumn(name = "collection_id", nullable = false)

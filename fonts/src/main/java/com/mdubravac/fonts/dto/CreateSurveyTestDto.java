@@ -1,6 +1,6 @@
 package com.mdubravac.fonts.dto;
 
-import com.mdubravac.fonts.entities.QuestionTest;
+import com.mdubravac.fonts.entities.ParticipantQuestion;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +15,6 @@ import java.util.List;
 public class CreateSurveyTestDto {
     private String title;
     private String uuid;
-    private List<QuestionTest> questions;
+    private List<ParticipantQuestion> questions;
     private String collectionName;
 }

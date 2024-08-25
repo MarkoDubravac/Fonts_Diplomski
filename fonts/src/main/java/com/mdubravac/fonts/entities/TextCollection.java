@@ -1,6 +1,7 @@
 package com.mdubravac.fonts.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.mdubravac.fonts.utils.Font;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +27,7 @@ public class TextCollection {
 
     @Column(name = "fonts", nullable = false)
     @ElementCollection
-    private List<String> fonts = new ArrayList<>();
+    private List<Font> fonts = new ArrayList<>();
 
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

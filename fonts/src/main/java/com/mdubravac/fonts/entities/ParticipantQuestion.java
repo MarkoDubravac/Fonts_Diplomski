@@ -15,8 +15,8 @@ import java.util.List;
 @Builder
 @Data
 @Entity
-@Table(name = "question_test")
-public class QuestionTest {
+@Table(name = "participant_question")
+public class ParticipantQuestion {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +28,7 @@ public class QuestionTest {
     @ManyToOne
     @JoinColumn(name = "survey_id")
     @JsonBackReference
-    private SurveyTest survey;
+    private ParticipantSurvey survey;
 
     @Override
     public String toString() {

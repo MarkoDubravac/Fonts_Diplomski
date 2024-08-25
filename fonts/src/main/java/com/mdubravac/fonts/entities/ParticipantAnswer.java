@@ -6,22 +6,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 @Entity
-@Table(name = "reponse_test")
-public class ResponseTest {
+@Table(name = "participant_answer")
+public class ParticipantAnswer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String surveySession;
+    private String responseText;
     @ManyToOne
-    @JoinColumn(name = "survey_id")
-    private SurveyTest survey;
-    @OneToMany(mappedBy = "response", cascade = CascadeType.ALL)
-    private List<AnswerTest> answers;
+    @JoinColumn(name = "question_id")
+    private ParticipantQuestion question;
+    @ManyToOne
+    @JoinColumn(name = "response_id")
+    private ParticipantResponse response;
 }

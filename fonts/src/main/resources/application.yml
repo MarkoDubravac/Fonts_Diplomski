@@ -1,13 +1,15 @@
 spring:
   datasource:
-    platform: mysql
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/dipldb
-    username: root
-    password: majmun20
-    initialization-mode: always
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:dipldb}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:majmun20}
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     show-sql: true
     hibernate:
       ddl-auto: create
+  sql:
+    init:
+      mode: always
+      platform: mysql

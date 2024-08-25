@@ -1,13 +1,13 @@
 package com.mdubravac.fonts.services;
 
 import com.mdubravac.fonts.dto.SurveyResponseDto;
-import com.mdubravac.fonts.entities.AnswerTest;
-import com.mdubravac.fonts.entities.QuestionTest;
-import com.mdubravac.fonts.entities.ResponseTest;
-import com.mdubravac.fonts.entities.SurveyTest;
-import com.mdubravac.fonts.repositories.QuestionTestRepository;
-import com.mdubravac.fonts.repositories.ResponseRepository;
-import com.mdubravac.fonts.repositories.SurveyTestRepository;
+import com.mdubravac.fonts.entities.ParticipantAnswer;
+import com.mdubravac.fonts.entities.ParticipantQuestion;
+import com.mdubravac.fonts.entities.ParticipantResponse;
+import com.mdubravac.fonts.entities.ParticipantSurvey;
+import com.mdubravac.fonts.repositories.ParticipantQuestionRepository;
+import com.mdubravac.fonts.repositories.ParticipantResponseRepository;
+import com.mdubravac.fonts.repositories.ParticipantSurveyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,24 +17,24 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SurveyResponseService {
-    private final SurveyTestRepository surveyRepository;
+    private final ParticipantSurveyRepository surveyRepository;
 
-    private final ResponseRepository responseRepository;
+    private final ParticipantResponseRepository participantResponseRepository;
 
-    private final QuestionTestRepository questionRepository;
+    private final ParticipantQuestionRepository questionRepository;
 
-    public ResponseTest saveSurveyResponse(SurveyResponseDto surveyResponseDTO) {
-        SurveyTest survey = surveyRepository.findById(surveyResponseDTO.getSurveyId())
+    public ParticipantResponse saveSurveyResponse(SurveyResponseDto surveyResponseDTO) {
+        ParticipantSurvey survey = surveyRepository.findById(surveyResponseDTO.getSurveyId())
                 .orElseThrow();
 
-        ResponseTest response = new ResponseTest();
+        ParticipantResponse response = new ParticipantResponse();
         response.setSurvey(survey);
 
-        List<AnswerTest> answers = surveyResponseDTO.getAnswers().stream().map(answerDTO -> {
-            QuestionTest question = questionRepository.findById(answerDTO.getQuestionId())
+        List<ParticipantAnswer> answers = surveyResponseDTO.getAnswers().stream().map(answerDTO -> {
+            ParticipantQuestion question = questionRepository.findById(answerDTO.getQuestionId())
                     .orElseThrow();
 
-            AnswerTest answer = new AnswerTest();
+            ParticipantAnswer answer = new ParticipantAnswer();
             answer.setQuestion(question);
             answer.setResponseText(answerDTO.getResponseText());
             answer.setResponse(response);
@@ -44,6 +44,6 @@ public class SurveyResponseService {
 
         response.setAnswers(answers);
         response.setSurveySession(surveyResponseDTO.getSurveySession());
-        return responseRepository.save(response);
+        return participantResponseRepository.save(response);
     }
 }

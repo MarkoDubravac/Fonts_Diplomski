@@ -1,5 +1,6 @@
 package com.mdubravac.fonts.dto;
 
+import com.mdubravac.fonts.utils.Font;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,5 @@ import java.util.List;
 @Data
 public class NewCollectionDto {
     private String name;
-    private List<String> fonts;
+    private List<Font> fonts;
 }
