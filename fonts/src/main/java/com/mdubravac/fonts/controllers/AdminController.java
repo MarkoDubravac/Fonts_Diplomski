@@ -9,9 +9,12 @@ import com.mdubravac.fonts.entities.ParticipantSurvey;
 import com.mdubravac.fonts.entities.SurveyText;
 import com.mdubravac.fonts.entities.TextCollection;
 import com.mdubravac.fonts.repositories.ParticipantSurveyRepository;
+import com.mdubravac.fonts.repositories.SurveyRepository;
 import com.mdubravac.fonts.repositories.TextCollectionRepository;
 import com.mdubravac.fonts.services.SurveyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +32,7 @@ public class AdminController {
     private final TextCollectionRepository textCollectionRepository;
 
     private final SurveyService surveyService;
+    private final SurveyRepository surveyRepository;
 
     @GetMapping
     public List<ParticipantSurvey> getAllParticipantSurveys() {
@@ -88,6 +92,41 @@ public class AdminController {
     @GetMapping("/stats")
     public List<AdminStatsDto> getSurveyStats() {
         return surveyService.getAverageRatingAndDurationPerSession();
+    }
+
+    @DeleteMapping("/deleteAll")
+    public void deleteSurveyResults() {
+        surveyService.deleteAll();
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<byte[]> exportCsv() {
+        try {
+            byte[] csvBytes = surveyService.exportDataToCsv();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=surveys.csv");
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/csv");
+
+            return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/exportParticipantData")
+    public ResponseEntity<byte[]> exportParticipantCsv() {
+        try {
+            byte[] csvBytes = surveyService.exportDataParticipantToCsv();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=participant.csv");
+            headers.add(HttpHeaders.CONTENT_TYPE, "text/csv");
+
+            return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

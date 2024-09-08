@@ -22,5 +22,7 @@ public class Survey {
     private Integer rating;
     @Column(name = "survey_session", nullable = false)
     private String surveySession;
+    @Column(name = "participant_survey_uuid", nullable = false)
+    private String participantSurveyUuid;
 
 }

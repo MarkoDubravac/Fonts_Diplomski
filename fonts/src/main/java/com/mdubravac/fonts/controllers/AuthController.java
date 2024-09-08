@@ -1,10 +1,10 @@
 package com.mdubravac.fonts.controllers;
 
 import com.mdubravac.fonts.config.UserAuthProvider;
+import com.mdubravac.fonts.dto.AdminDto;
 import com.mdubravac.fonts.dto.CredentialsDto;
 import com.mdubravac.fonts.dto.ErrorDto;
 import com.mdubravac.fonts.dto.SignUpDto;
-import com.mdubravac.fonts.dto.UserDto;
 import com.mdubravac.fonts.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody CredentialsDto credentialsDto) {
-        UserDto user = userService.login(credentialsDto);
+        AdminDto user = userService.login(credentialsDto);
         if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ErrorDto("User not found or invalid credentials"));
@@ -35,11 +35,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody SignUpDto signUpDto) {
-        UserDto user = userService.register(signUpDto);
-        System.out.println(user.getRole());
-        user.setToken(userAuthProvider.createToken(user));
-        return ResponseEntity.created(URI.create("/users/" + user.getId())).body(user);
+    public ResponseEntity<AdminDto> register(@RequestBody SignUpDto signUpDto) {
+        AdminDto admin = userService.register(signUpDto);
+        admin.setToken(userAuthProvider.createToken(admin));
+        return ResponseEntity.created(URI.create("/admins/" + admin.getId())).body(admin);
     }
-
 }

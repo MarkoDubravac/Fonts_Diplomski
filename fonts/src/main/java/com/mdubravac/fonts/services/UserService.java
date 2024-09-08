@@ -1,8 +1,8 @@
 package com.mdubravac.fonts.services;
 
+import com.mdubravac.fonts.dto.AdminDto;
 import com.mdubravac.fonts.dto.CredentialsDto;
 import com.mdubravac.fonts.dto.SignUpDto;
-import com.mdubravac.fonts.dto.UserDto;
 import com.mdubravac.fonts.entities.User;
 import com.mdubravac.fonts.enums.Role;
 import com.mdubravac.fonts.exceptions.ApplicationException;
@@ -24,12 +24,12 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto findByLogin(String login) {
+    public AdminDto findByLogin(String login) {
         User user = userRepository.findByLogin(login).orElseThrow(() -> new ApplicationException("Unknown user", HttpStatus.NOT_FOUND));
         return userMapper.toUserDto(user);
     }
 
-    public UserDto login(CredentialsDto credentialsDto) {
+    public AdminDto login(CredentialsDto credentialsDto) {
         User user = userRepository.findByLogin(credentialsDto.getLogin()).orElseThrow(() -> new ApplicationException("Unknown user", HttpStatus.NOT_FOUND));
         if (passwordEncoder.matches(CharBuffer.wrap(credentialsDto.getPassword()), user.getPassword())) {
             return userMapper.toUserDto(user);
@@ -37,7 +37,7 @@ public class UserService {
         throw new ApplicationException("Invalid password", HttpStatus.BAD_REQUEST);
     }
 
-    public UserDto register(SignUpDto userDto) {
+    public AdminDto register(SignUpDto userDto) {
         Optional<User> optionalUser = userRepository.findByLogin(userDto.getLogin());
 
         if (optionalUser.isPresent()) {
@@ -48,11 +48,6 @@ public class UserService {
 
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(CharBuffer.wrap(userDto.getPassword())));
-
-        System.out.println("This is user - ");
-        System.out.println(user);
-        System.out.println("But this, this is dto - ");
-        System.out.println(userMapper.toUserDto(user));
 
         userRepository.save(user);
         return userMapper.toUserDto(user);

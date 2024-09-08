@@ -32,6 +32,11 @@ public class SurveyController {
         return participantSurveyRepository.findByUuid(uuid);
     }
 
+    @GetMapping("/finished")
+    public ResponseEntity<Long> getFinished(@RequestParam String session) {
+        return new ResponseEntity<>(surveyService.getFinished(session), HttpStatus.OK);
+    }
+
     @PostMapping("/responses")
     public ResponseEntity<ParticipantResponse> submitSurveyResponse(@RequestBody SurveyResponseDto surveyResponseDTO) {
         ParticipantResponse savedResponse = surveyResponseService.saveSurveyResponse(surveyResponseDTO);
@@ -64,18 +69,18 @@ public class SurveyController {
     }
 
     @GetMapping("/stats")
-    public ResponseEntity<List<ChartData>> getRatingStats(@RequestParam Optional<String> session) {
-        return session.map(s -> ResponseEntity.ok(surveyService.getRatingPerFont(s))).orElseGet(() -> ResponseEntity.ok(surveyService.getRatingPerFont()));
+    public ResponseEntity<List<ChartData>> getRatingStats(@RequestParam Optional<String> session, @RequestParam Optional<String> uuid) {
+        return session.map(s -> ResponseEntity.ok(surveyService.getRatingPerFont(s))).orElseGet(() -> ResponseEntity.ok(surveyService.getAllRatingPerFont(uuid.get())));
     }
 
     @GetMapping("/stats/duration")
-    public ResponseEntity<List<ChartData>> getDurationStats(@RequestParam Optional<String> session) {
-        return session.map(s -> ResponseEntity.ok(surveyService.getDurationPerFont(s))).orElseGet(() -> ResponseEntity.ok(surveyService.getDurationPerFont()));
+    public ResponseEntity<List<ChartData>> getDurationStats(@RequestParam Optional<String> session, @RequestParam Optional<String> uuid) {
+        return session.map(s -> ResponseEntity.ok(surveyService.getDurationPerFont(s))).orElseGet(() -> ResponseEntity.ok(surveyService.getAllDurationsPerFont(uuid.get())));
 
     }
 
     @GetMapping("/fun-facts")
-    public ResponseEntity<FunFactsData> getFunFacts(@RequestParam Optional<String> session) {
-        return session.map(s -> ResponseEntity.ok(surveyService.getFunFacts(s))).orElseGet(() -> ResponseEntity.ok(surveyService.getFunFacts()));
+    public ResponseEntity<FunFactsData> getFunFacts(@RequestParam Optional<String> session, @RequestParam Optional<String> uuid) {
+        return session.map(s -> ResponseEntity.ok(surveyService.getFunFacts(s))).orElseGet(() -> ResponseEntity.ok(surveyService.getAllFunFacts(uuid.get())));
     }
 }

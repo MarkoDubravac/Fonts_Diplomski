@@ -13,4 +13,5 @@ public class SurveyDto {
     private Integer duration;
     private Integer rating;
     private String surveySession;
+    private String participantSurveyUuid;
 }

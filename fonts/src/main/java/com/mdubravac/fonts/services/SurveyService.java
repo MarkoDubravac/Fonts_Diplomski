@@ -4,15 +4,9 @@ import com.mdubravac.fonts.dto.AdminStatsDto;
 import com.mdubravac.fonts.dto.NewCollectionDto;
 import com.mdubravac.fonts.dto.SurveyDto;
 import com.mdubravac.fonts.dto.SurveyTextDto;
-import com.mdubravac.fonts.entities.Survey;
-import com.mdubravac.fonts.entities.ParticipantSurvey;
-import com.mdubravac.fonts.entities.SurveyText;
-import com.mdubravac.fonts.entities.TextCollection;
+import com.mdubravac.fonts.entities.*;
 import com.mdubravac.fonts.mappers.SurveyMapper;
-import com.mdubravac.fonts.repositories.SurveyRepository;
-import com.mdubravac.fonts.repositories.ParticipantSurveyRepository;
-import com.mdubravac.fonts.repositories.SurveyTextRepository;
-import com.mdubravac.fonts.repositories.TextCollectionRepository;
+import com.mdubravac.fonts.repositories.*;
 import com.mdubravac.fonts.utils.ChartData;
 import com.mdubravac.fonts.utils.Font;
 import com.mdubravac.fonts.utils.FunFactsData;
@@ -32,7 +26,11 @@ public class SurveyService {
     private final SurveyMapper surveyMapper;
 
     private final TextCollectionRepository textCollectionRepository;
+
     private final ParticipantSurveyRepository participantSurveyRepository;
+
+    private final ParticipantResponseRepository participantResponseRepository;
+
 
     public Long submit(SurveyDto surveyDto) {
         Survey survey = surveyMapper.toSurvey(surveyDto);
@@ -71,7 +69,8 @@ public class SurveyService {
 
     public List<ChartData> getRatingPerFont(String session) {
         List<ChartData> fontsAndRatings = new ArrayList<>();
-        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts(session);
+        List<String> uniqueFonts = surveyRepository.findOneWithUniqueFonts(session);
+        System.out.println(uniqueFonts);
         for (String font : uniqueFonts) {
             Float rating = surveyRepository.findAverageRatingOfFontPerSession(font, session);
             ChartData data = new ChartData(font, rating);
@@ -80,11 +79,11 @@ public class SurveyService {
         return fontsAndRatings;
     }
 
-    public List<ChartData> getRatingPerFont() {
+    public List<ChartData> getAllRatingPerFont(String uuid) {
         List<ChartData> fontsAndRatings = new ArrayList<>();
-        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts();
+        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts(uuid);
         for (String font : uniqueFonts) {
-            Float rating = surveyRepository.findAverageRatingOfFontPerSession(font);
+            Float rating = surveyRepository.findAverageRatingOfFontPerSessionByUuid(font, uuid);
             ChartData data = new ChartData(font, rating);
             fontsAndRatings.add(data);
         }
@@ -94,7 +93,7 @@ public class SurveyService {
 
     public List<ChartData> getDurationPerFont(String session) {
         List<ChartData> fontsAndTimes = new ArrayList<>();
-        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts(session);
+        List<String> uniqueFonts = surveyRepository.findOneWithUniqueFonts(session);
         for (String font : uniqueFonts) {
             Float rating = surveyRepository.findAverageDurationPerFontPerSession(font, session);
             ChartData data = new ChartData(font, rating);
@@ -103,11 +102,11 @@ public class SurveyService {
         return fontsAndTimes;
     }
 
-    public List<ChartData> getDurationPerFont() {
+    public List<ChartData> getAllDurationsPerFont(String uuid) {
         List<ChartData> fontsAndTimes = new ArrayList<>();
-        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts();
+        List<String> uniqueFonts = surveyRepository.findAllWithUniqueFonts(uuid);
         for (String font : uniqueFonts) {
-            Float rating = surveyRepository.findAverageDurationPerFontPerSession(font);
+            Float rating = surveyRepository.findAverageDurationPerFontPerSessionPerUuid(font, uuid);
             ChartData data = new ChartData(font, rating);
             fontsAndTimes.add(data);
         }
@@ -122,17 +121,16 @@ public class SurveyService {
         return new FunFactsData(highestRated, lowestDuration, lowestRated, highestDuration);
     }
 
-    public FunFactsData getFunFacts() {
-        List<String> highestRated = surveyRepository.findHighestRatedSurvey();
-        List<String> lowestDuration = surveyRepository.findLeastDurationSurvey();
-        List<String> lowestRated = surveyRepository.findLowestRatedSurvey();
-        List<String> highestDuration = surveyRepository.findHighestDurationSurvey();
+    public FunFactsData getAllFunFacts(String uuid) {
+        List<String> highestRated = surveyRepository.findHighestRatedSurveyByUuid(uuid);
+        List<String> lowestDuration = surveyRepository.findLeastDurationSurveyByUuid(uuid);
+        List<String> lowestRated = surveyRepository.findLowestRatedSurveyByUuid(uuid);
+        List<String> highestDuration = surveyRepository.findHighestDurationSurveyByUuid(uuid);
         return new FunFactsData(highestRated, lowestDuration, lowestRated, highestDuration);
     }
 
     public TextCollection saveTextCollection(NewCollectionDto newCollectionDto) {
         TextCollection textCollection = new TextCollection();
-        System.out.println(newCollectionDto.getFonts());
         textCollection.setName(newCollectionDto.getName());
         textCollection.setFonts(newCollectionDto.getFonts());
         return textCollectionRepository.save(textCollection);
@@ -158,6 +156,76 @@ public class SurveyService {
 
     public List<AdminStatsDto> getAverageRatingAndDurationPerSession() {
         return surveyRepository.findAverageRatingAndDurationPerSession();
+    }
 
+    public void deleteAll() {
+        surveyRepository.deleteAll();
+    }
+
+    public byte[] exportDataToCsv() {
+        try {
+            StringBuilder csvContent = new StringBuilder();
+            csvContent.append("Survey ID, Font, Duration, Participant Session, Participant Survey UUID\n");
+            List<Survey> surveys = surveyRepository.findAll();
+            for (Survey survey : surveys) {
+                csvContent.append(survey.getId())
+                        .append(",")
+                        .append(survey.getFont())
+                        .append(",")
+                        .append(survey.getDuration())
+                        .append(",")
+                        .append(survey.getSurveySession())
+                        .append(",")
+                        .append(survey.getParticipantSurveyUuid())
+                        .append("\n");
+            }
+            return csvContent.toString().getBytes();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating CSV", e);
+        }
+    }
+
+    public byte[] exportDataParticipantToCsv() {
+        try {
+            StringBuilder csvContent = new StringBuilder();
+
+            csvContent.append("Participant Survey ID, Participant Survey UUID, Participant Session, Session Response ID, Question, Answer Text\n");
+
+            List<ParticipantSurvey> participantSurveys = participantSurveyRepository.findAll();
+
+            for (ParticipantSurvey survey : participantSurveys) {
+                List<ParticipantResponse> responses = participantResponseRepository.findBySurvey(survey);
+
+                for (ParticipantResponse response : responses) {
+                    List<ParticipantAnswer> answers = response.getAnswers();
+
+                    for (ParticipantAnswer answer : answers) {
+                        csvContent.append(survey.getId())
+                                .append(",")
+                                .append(survey.getUuid())
+                                .append(",")
+                                .append(response.getSurveySession())
+                                .append(",")
+                                .append(response.getId())
+                                .append(",")
+                                .append(answer.getQuestion().getText())
+                                .append(",")
+                                .append(answer.getResponseText())
+                                .append("\n");
+                    }
+                }
+            }
+
+            return csvContent.toString().getBytes();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating CSV", e);
+        }
+    }
+
+
+    public Long getFinished(String session) {
+        return surveyRepository.countBySurveySession(session);
     }
 }
